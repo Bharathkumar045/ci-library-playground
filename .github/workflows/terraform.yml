@@ -1,0 +1,26 @@
+name: Terraform · Lint & Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "terraform-module/**"
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    uses: Bharathkumar045/github-tests/.github/workflows/terraform-lint.yml@main
+    secrets: inherit
+    with:
+      project-path: terraform-module
+      check-docs: false
+
+  test:
+    needs: lint
+    uses: Bharathkumar045/github-tests/.github/workflows/terraform-test.yml@main
+    secrets: inherit
+    with:
+      project-path: terraform-module

@@ -1,0 +1,28 @@
+name: Deploy · GitOps Targeted Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        required: true
+        type: string
+        description: "Target environment (e.g. dev, staging, production)"
+      target-version:
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  deploy-argocd:
+    uses: Bharathkumar045/github-tests/.github/workflows/deploy-argocd-gitops.yml@main
+    secrets: inherit
+    with:
+      environment: ${{ inputs.environment }}
+      target-version: ${{ inputs.target-version }}
+      gitops-repository: Bharathkumar045/ci-library-playground-gitops
+      gitops-branch: main
+      argocd-apps: ci-library-playground

@@ -1,0 +1,12 @@
+name: Security · SBOM
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sbom:
+    uses: Bharathkumar045/github-tests/.github/workflows/sbom.yml@main
+    secrets: inherit

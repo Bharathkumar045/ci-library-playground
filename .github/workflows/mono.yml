@@ -1,0 +1,15 @@
+name: Mono · Changed Project Discovery
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  discover:
+    uses: Bharathkumar045/github-tests/.github/workflows/mono.yml@main
+    secrets: inherit
+    with:
+      projects: '[{"name":"api","path":"services/api"},{"name":"web","path":"services/web"}]'
+      always-run-all: true

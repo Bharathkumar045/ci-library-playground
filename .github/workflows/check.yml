@@ -1,0 +1,19 @@
+name: Check · Release Prerequisites
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  init:
+    uses: Bharathkumar045/github-tests/.github/workflows/init.yml@main
+    secrets: inherit
+
+  check:
+    needs: init
+    uses: Bharathkumar045/github-tests/.github/workflows/check.yml@main
+    secrets: inherit
+    with:
+      tag: ${{ needs.init.outputs.tag }}

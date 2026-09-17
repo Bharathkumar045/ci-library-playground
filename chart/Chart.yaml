@@ -1,0 +1,6 @@
+apiVersion: v2
+name: ci-library-playground
+description: Minimal chart to test the ci-library's chart.yml
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

@@ -1,0 +1,12 @@
+{
+  "name": "ci-library-playground",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "mkdir -p dist && echo \"module.exports = () => 'hello';\" > dist/index.js",
+    "test": "mkdir -p test-report && node --test && node -e \"require('fs').writeFileSync('test-report/junit.xml', '<testsuite name=\\\"sample\\\" tests=\\\"1\\\" failures=\\\"0\\\"><testcase name=\\\"adds two numbers\\\" classname=\\\"sample\\\"/></testsuite>')\""
+  },
+  "dependencies": {
+    "leftpad": "^0.0.1"
+  }
+}

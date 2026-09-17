@@ -1,0 +1,59 @@
+name: CI · PR Verification
+on:
+  pull_request:
+    branches: [main]
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+permissions:
+  contents: read
+  packages: write
+  actions: read
+  checks: write
+
+jobs:
+  init:
+    uses: Bharathkumar045/github-tests/.github/workflows/init.yml@main
+    secrets: inherit
+
+  lint:
+    uses: Bharathkumar045/github-tests/.github/workflows/lint.yml@main
+    secrets: inherit
+
+  build:
+    uses: Bharathkumar045/github-tests/.github/workflows/node-build.yml@main
+    secrets: inherit
+
+  image:
+    needs: [init, build]
+    uses: Bharathkumar045/github-tests/.github/workflows/docker.yml@main
+    secrets: inherit
+    with:
+      image-tag: ${{ needs.init.outputs.image-push-tag }}
+      image-repository: ${{ needs.init.outputs.image-push-repository }}
+
+  scan:
+    needs: [init, image]
+    uses: Bharathkumar045/github-tests/.github/workflows/scan.yml@main
+    secrets: inherit
+    with:
+      scan-type: image
+      image-ref: ${{ needs.image.outputs.image-ref-digest }}
+
+  chart:
+    needs: init
+    uses: Bharathkumar045/github-tests/.github/workflows/chart.yml@main
+    secrets: inherit
+    with:
+      chart-name: ${{ needs.init.outputs.chart-name }}
+      chart-version: ${{ needs.init.outputs.chart-push-version }}
+      chart-app-version: ${{ needs.init.outputs.chart-app-version }}
+      chart-repository: ${{ needs.init.outputs.chart-push-repository }}
+      check-docs: false
+
+  check:
+    needs: init
+    uses: Bharathkumar045/github-tests/.github/workflows/check.yml@main
+    secrets: inherit
+    with:
+      tag: ${{ needs.init.outputs.tag }}

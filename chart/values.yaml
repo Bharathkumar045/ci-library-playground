@@ -1,0 +1,5 @@
+replicaCount: 1
+
+image:
+  repository: bharathkumarradha/ci-library-playground-app
+  tag: test-0.0.1

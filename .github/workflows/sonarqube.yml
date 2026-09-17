@@ -1,0 +1,12 @@
+name: Quality · SonarQube
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sonarqube:
+    uses: Bharathkumar045/github-tests/.github/workflows/sonarqube.yml@main
+    secrets: inherit

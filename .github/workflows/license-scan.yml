@@ -1,0 +1,15 @@
+name: Security · License Scan
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  scan:
+    uses: Bharathkumar045/github-tests/.github/workflows/scan.yml@main
+    secrets: inherit
+    with:
+      scan-type: license

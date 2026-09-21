@@ -47,4 +47,3 @@ jobs:
     with:
       tag: ${{ needs.init.outputs.tag }}
       upstream-run-id: ${{ needs.init.outputs.upstream-run-id }}
-      notify: false

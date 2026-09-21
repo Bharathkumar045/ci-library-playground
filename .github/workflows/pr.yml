@@ -17,8 +17,28 @@ jobs:
     uses: Bharathkumar045/github-tests/.github/workflows/init.yml@main
     secrets: inherit
 
+  trivy-cache:
+    uses: Bharathkumar045/github-tests/.github/workflows/trivy-cache.yml@main
+    secrets: inherit
+
+  check:
+    needs: init
+    uses: Bharathkumar045/github-tests/.github/workflows/check.yml@main
+    secrets: inherit
+    with:
+      tag: ${{ needs.init.outputs.tag }}
+      chart-name: ${{ needs.init.outputs.chart-name }}
+      chart-version: ${{ needs.init.outputs.chart-version }}
+      chart-repository: ${{ needs.init.outputs.chart-repository }}
+      image-tag: ${{ needs.init.outputs.image-tag }}
+      image-repository: ${{ needs.init.outputs.image-repository }}
+
   lint:
     uses: Bharathkumar045/github-tests/.github/workflows/lint.yml@main
+    secrets: inherit
+
+  node-lint:
+    uses: Bharathkumar045/github-tests/.github/workflows/node-lint.yml@main
     secrets: inherit
 
   build:
@@ -33,14 +53,6 @@ jobs:
       image-tag: ${{ needs.init.outputs.image-push-tag }}
       image-repository: ${{ needs.init.outputs.image-push-repository }}
 
-  scan:
-    needs: [init, image]
-    uses: Bharathkumar045/github-tests/.github/workflows/scan.yml@main
-    secrets: inherit
-    with:
-      scan-type: image
-      image-ref: ${{ needs.image.outputs.image-ref-digest }}
-
   chart:
     needs: init
     uses: Bharathkumar045/github-tests/.github/workflows/chart.yml@main
@@ -52,9 +64,39 @@ jobs:
       chart-repository: ${{ needs.init.outputs.chart-push-repository }}
       check-docs: false
 
-  check:
-    needs: init
-    uses: Bharathkumar045/github-tests/.github/workflows/check.yml@main
+  image-scan:
+    needs: [image, trivy-cache]
+    uses: Bharathkumar045/github-tests/.github/workflows/scan.yml@main
     secrets: inherit
     with:
-      tag: ${{ needs.init.outputs.tag }}
+      scan-type: image
+      image-ref: ${{ needs.image.outputs.image-ref-digest }}
+
+  chart-scan:
+    needs: [chart, trivy-cache]
+    uses: Bharathkumar045/github-tests/.github/workflows/scan.yml@main
+    secrets: inherit
+    with:
+      scan-type: config
+      config-type: chart
+
+  license-scan:
+    needs: trivy-cache
+    uses: Bharathkumar045/github-tests/.github/workflows/scan.yml@main
+    secrets: inherit
+    with:
+      scan-type: license
+
+  sbom:
+    needs: trivy-cache
+    uses: Bharathkumar045/github-tests/.github/workflows/sbom.yml@main
+    secrets: inherit
+
+  secret-scan:
+    uses: Bharathkumar045/github-tests/.github/workflows/secret-scanning.yml@main
+    secrets: inherit
+
+  sonarqube:
+    needs: build
+    uses: Bharathkumar045/github-tests/.github/workflows/sonarqube.yml@main
+    secrets: inherit
